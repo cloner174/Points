@@ -79,7 +79,8 @@ from SimpleS import Dim3
 
 from SimpleS.Dim3 import *
 
-# This one Lets you use all the functions inside Dim3 class without any initialize word; FOR EXAMPLE:
+# This one Lets you use all the functions inside Dim3 class without any initialize word;
+# FOR EXAMPLE:
 
 Dim3.rotate_points()
 
@@ -87,15 +88,19 @@ Dim3.rotate_points()
 
 rotate_3d_points()
 ```
-+ **if you faced any truble to find out any import like last one, exactly which and what function brings with itself, simply use dir() function:**
-+ > from  SimpleS import Dim3
+**If you encounter any trouble determining the specifics of an import, such as which functions it includes, simply use the dir() function:**
+```python
+from SimpleS import Dim3
 
-+ > dir(Dim3)
+dir(Dim3)
+```
+This will show you the names of all functions inside the Dim3 class.
 
-+ **This Will shows you the name of all functions inside Dim3**
+After that, we will return to our simpler method:
 
-+ **After that, We will back to our simple way!**
-+ > from SimpleS.Dim3 import *
+```python
+from SimpleS.Dim3 import *
+```
 
 #### Rotating 3D Points
 
@@ -113,7 +118,6 @@ plot_points(vertices, faces)
 #### Creating a Grayscale Image from 3D Points
 
 ```python
-
 image = create_bool_image_from_points(points)
 ```
 
@@ -233,7 +237,6 @@ show_image('path_to_image.png', title="Example Image", save=True, save_path='./'
 - Example:
 
 ```python
-
 from SimpleS.basics import *
 
 filled_image = fill_shape(image, points, color=(255, 0, 0))
@@ -249,7 +252,6 @@ filled_image = fill_shape(image, points, color=(255, 0, 0))
 + Example:
 
 ```python
-
 from SimpleS.basics import *
 
 grayscale_image = force_image_to_GRAYSCALE(color_image)
@@ -269,7 +271,6 @@ grayscale_image = force_image_to_GRAYSCALE(color_image)
 + Example:
 
 ```python
-
 from SimpleS.basics import *
 
 binary_image = read_image_in_grayscale('path_to_image.png', thrhold=127, type='THRESH_BINARY', also_make_it_binary=True)
