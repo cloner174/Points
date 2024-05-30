@@ -1,76 +1,334 @@
-# Simple-Space 
+# Simple-Space
 ### *A Try at Better Understanding Space*
 
-# Dim3
+### Table of Contents
 
-The `Dim3` class offers tools for visualizing and processing 3D point data in Python, using libraries such as `numpy`, `matplotlib`, and `scipy`. This class provides methods to rotate 3D points, plot 3D data, create grayscale images from 3D points, and fill gaps in binary images.
-
-## Features
-
-- **Rotate 3D Points**: Rotate points around a specified axis by a given angle in degrees.
-- **Plot 3D Points/Mesh**: Visualize 3D points or a mesh, with customizable visual attributes.
-- **Create Grayscale Image from 3D Points**: Project 3D points onto a 2D plane using the z-coordinate for intensity.
-- **Fill Points in Binary Image**: Use morphological dilation to fill gaps in binary images.
+- [Installation](#installation)
+- [Structure](#structure)
+- [Submodules](#submodules)
++ Points
+  - [Dim3 Class](#dim3-class)
++ ImageRelated
+  - [enhancements.py](#imagerelated-scripts--enhancementspy)
+  - [basics.py](#imagerelated-scripts--basicspy)
+- [License](#license)
+- [Contact](#contact)
 
 ## Installation
 
-Ensure you have Python installed, along with the following packages:
-- `numpy`
-- `matplotlib`
-- `scipy`
+To use all these utilities, just following Python package should be installed:
 
-You can install these packages via pip if they are not already installed:
-
-```bash
-pip install numpy matplotlib scipy
+```sh
+pip install simple-space
 ```
-## Usage
-Initializing the Class
+
+## Structure
+
+```markdown
+simple-space/
+│
+├── SimpleS/
+│   ├── __init__.py
+│   ├── utils.py
+│   └── Points/
+│       ├── __init__.py
+│       ├── dimentions.py
+│   └── ImageRelated/
+│       ├── __init__.py
+│       ├── enhancements.py
+│       └── basics.py
+├── README.md
+├── LICENSE
+└── pyproject.toml
+```
+## Submodules
+1. Points
+
+    - dimentions.py:
+     Contains the Dim3 and Dim2 classes for 3D and 2D point data processing and visualization.
+2. ImageRelated
+
+    - enhancements.py: Provides functions for image enhancement, including erosion and dilation.
+    - basics.py: Contains basic image processing utilities like edge detection and color inversion.
+
+## Dim3 Class
+
+The Dim3 class offers tools for visualizing and processing 3D point data in Python, using libraries such as numpy, matplotlib, and scipy.
+
+### Features
+
+- **Rotate 3D Points:** Rotate points around a specified axis by a given angle in degrees.
+- **Plot 3D Points/Mesh:** Visualize 3D points or a mesh, with customizable visual attributes.
+- **Create Grayscale Image from 3D Points:** Project 3D points onto a 2D plane using the z-coordinate for intensity.
+- **Fill Points in Binary Image:** Use morphological dilation to fill gaps in binary images.
+
+### Usage
+
+#### Initializing the Class
 
 ```python
 
-from your_module import Dim3
-dim3 = Dim3()
+from SimpleS.Points.dimentions import Dim3
+
+# Or even :
+
+from SimpleS import Dim3
 ```
-Rotating 3D Points
+```python
+# But I recommend You Simply Use this one:
+
+from SimpleS.Dim3 import *
+
+# This one Lets you use all the functions inside Dim3 class without any initialize word; FOR EXAMPLE:
+
+Dim3.rotate_points()
+
+# WOULD BE JUST:
+
+rotate_3d_points()
+```
++ **if you faced any truble to find out any import like last one, exactly which and what function brings with itself, simply use dir() function:**
++ > from  SimpleS import Dim3
+
++ > dir(Dim3)
+
++ **This Will shows you the name of all functions inside Dim3**
+
++ **After that, We will back to our simple way!**
++ > from SimpleS.Dim3 import *
+
+#### Rotating 3D Points
+
+```python
+rotated_points = rotate_points(points, 45, 'z')
+```
+
+#### Plotting 3D Points or Mesh
+
+```python
+plot_points(vertices, faces)
+```
+
+
+#### Creating a Grayscale Image from 3D Points
 
 ```python
 
-points = np.array([[1, 1, 1], [2, 2, 2]])
-rotated_points = dim3.rotate_3d_points(points, 45, 'z')
+image = create_bool_image_from_points(points)
 ```
-Plotting 3D Points or Mesh
+
+
+#### Filling Points in a Binary Image
+
+```python
+filled_image = fill_points(binary_image)
+```
+For more detailed information on each method, please refer to the inline documentation within the class methods.
+
+
+## ImageRelated Scripts : enhancements.py
+
+### Introduction
+This Python script, titled "enhancements", is an enhanced version of the original image processing examples provided by OpenCV. It includes functionalities for applying erosion and dilatation transformations to images. This script can be used for educational purposes or integrated into larger image processing projects.
+
+### Features
+- **Erosion and Dilatation**: Apply morphological transformations to enhance or reduce features in images.
+- **Flexible File Handling**: Load images from file paths or directly from images in memory.
+- **Visualization**: Compare original and transformed images side by side.
+- **Save Results**: Optionally save the resulting images with a timestamp and transformation details.
+
+### Prerequisites
+Before running the script, ensure you have Python installed on your system. This script is compatible with Python 3.6 or higher.
+
+### Usage
+
+To use this script, you need to create an instance of the ErosAndDilat class with either a path to an image file or an image object. Here's a quick example on how to use the class:
 
 ```python
 
-vertices = [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [0.5, 0.5, 1]]
-faces = [[0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4], [0, 1, 2, 3]]
-dim3.plot_3d_points(vertices, faces)
+from SimpleS.enhancements import ErosAndDilat
+
+# Initialize with an image path
+image_processor = ErosAndDilat('path/to/your/image.jpg')
+
+# Perform erosion and dilatation, display results, and save them
+image_processor.main(eros=True, dilate=True, show=True, save=True)
 ```
-Creating a Grayscale Image from 3D Points
+### Parameters
+
+- eros: Enable erosion (default: True)
+- dilate: Enable dilatation (default: True)
+- show: Display the images using matplotlib (default: True)
+- save: Save the images to disk (default: False)
+- save_path: Directory to save the images (default: 'results')
+- file_name: Base file name for saved images (default: None)
+
+### Acknowledgements
+
+Special thanks to the OpenCV community for providing the base examples which were enhanced in this project. Also, check out the original script and documentation at OpenCV GitHub.
+
+## ImageRelated Scripts : basics.py
+
+This script, titled "basics", provides a collection of image processing utilities written in Python. These functions can be used for tasks such as edge detection, image inversion, and binary image creation. 
+
+
+### ***Functions***
+
+#### invert_image_color
+
+  - Inverts the colors of an image. Can optionally save the result to a file.
+  - Parameters:
+
+    - image: Path to the image file or a numpy array.
+    - save (optional): Whether to save the result.
+    - save_path (optional): Directory to save the result.
+    - file_name (optional): Name of the saved file.
+
+- Example:
 
 ```python
 
-points = np.random.rand(100, 3) * 100
-image = dim3.create_bool_image_from_3d_points(points)
+from SimpleS import basics
+
+# Or :
+
+from SimpleS.basics import invert_image_color
+
+#Or:
+
+from SimpleS.basics import * # Access to all
+
 ```
-Filling Points in a Binary Image
+
+#### show_image
+
+- Displays an image using matplotlib.
+- Parameters:
+
+    - image: Path to the image file or a numpy array.
+    - title (optional): Title of the image window.
+    - c_map (optional): Color map for displaying the image.
+    - interpolation (optional): Interpolation method for - - - displaying the image.
+    - save (optional): Whether to save the result.
+    - save_path (optional): Directory to save the result.
+    - file_name (optional): Name of the saved file.
+
+- Example:
+
+```python
+from SimpleS.basics import *
+
+show_image('path_to_image.png', title="Example Image", save=True, save_path='./', file_name='example_image.png')
+```
+
+#### fill_shape
+
+- Fills an area of a shape in an image based on the points defining the edges of the shape.
+- Parameters:
+
+    - image: The image where the shape is to be filled.
+    - points: A list of (x, y) tuples defining the vertices of the shape.
+    - color: A tuple defining the color to fill the shape.
+
+- Example:
 
 ```python
 
-binary_image = np.random.randint(0, 2, (500, 500), dtype=np.uint8)
-filled_image = dim3.fill_points(binary_image)
+from SimpleS.basics import *
+
+filled_image = fill_shape(image, points, color=(255, 0, 0))
 ```
-## Documentation
 
-For more detailed information on each method, refer to the inline documentation within the class methods.
+#### force_image_to_GRAYSCALE
 
-## Mistakes and Corrections
-To err is human, and nobody likes a perfect person! If you come across any mistakes or if you have questions, feel free to raise an issue or submit a pull request. Your contributions to improving the content are highly appreciated.
++ Converts a color image to grayscale.
++ Parameters:
+
+    - image: The color image.
+
++ Example:
+
+```python
+
+from SimpleS.basics import *
+
+grayscale_image = force_image_to_GRAYSCALE(color_image)
+```
+
+#### read_image_in_grayscale
+
++ Reads an image in grayscale mode and optionally converts it to binary.
++ Parameters:
+
+    + image_path: Path to the image file.
+    + thrhold (optional): Threshold value for binarization.
+    + type (optional): Thresholding type.
+    + also_make_it_binary (optional): Whether to convert to binary.
+    + binary_image_color (optional): Color for binary conversion.
+
++ Example:
+
+```python
+
+from SimpleS.basics import *
+
+binary_image = read_image_in_grayscale('path_to_image.png', thrhold=127, type='THRESH_BINARY', also_make_it_binary=True)
+```
+#### simple_binary_image_creator
+
++ Creates a binary image from a list of points.
++ Parameters:
+
+    +points: List of tuples (x, y) representing the coordinates of points.
+    + image_size (optional): Tuple (width, height) for the output image size.
+    + size_of_edge_points (optional): Size of the points to enlarge.
+    + iterations (optional): Number of iterations for dilation.
+    + enlarge_points (optional): Whether to enlarge points.
+    + smoothing (optional): Whether to apply Gaussian blur.
+
++ Example:
+
+```python
+
+from SimpleS.basics import *
+
+binary_image = simple_binary_image_creator(points, image_size=(100, 100))
+```
+#### advance_binary_image_creator
+
++ Creates an advanced binary image from a list of points.
++ Parameters:
+
+    + points: List of tuples (x, y) representing the coordinates of points.
+    + shape_size (optional): Size of the shape.
+
+#### detect_edges
+
++ Detects edges in an image and optionally displays or saves the result.
++ Parameters:
+
+    + image: Path to the image file or a numpy array.
+    + n1 (optional): Lower threshold for the Canny edge detector.
+    + n2 (optional): Upper threshold for the Canny edge detector.
+    + show_edges (optional): Whether to display the detected edges.
+    + show_contours (optional): Whether to display the detected contours.
+    + title_for_detected_edges (optional): Title for the detected edges plot.
+    + title_for_detected_contours (optional): Title for the detected contours plot.
+    + return_edges (optional): Whether to return the detected edges.
+    + return_contours (optional): Whether to return the detected contours.
+    + range_color_start (optional): Start of the range for random colors.
+    + range_color_end (optional): End of the range for random colors.
+    + save (optional): Whether to save the result.
+    + save_path (optional): Directory to save the result.
+    + file_name (optional): Name of the saved file.
+
 
 ## License
 This project is open-sourced under the `MIT License`. See the LICENSE file for more details.
 
+## Mistakes and Corrections
+To err is human, and nobody likes a perfect person! If you come across any mistakes or if you have questions, feel free to raise an issue or submit a pull request. Your contributions to improving the content are highly appreciated.
+
 ## Contact
 
-For more information, please contact: cloner174.org@gmail.com
+Any Time: cloner174.org@gmail.com
