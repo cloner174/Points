@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from scipy.ndimage import binary_dilation
-from utils import save_path_generator
+from SimpleS.utils import save_path_generator
 import cv2
 import scipy.ndimage as ndi
 from skimage import img_as_ubyte
