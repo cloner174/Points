@@ -23,3 +23,20 @@ def save_path_generator(filename = None, path = None, flag = None):
                 raise Exception(f"{e}")
         
         return savepath
+
+
+def split_dim(arr):
+        
+        X = [point[0] for point in arr]
+        Y = [point[1] for point in arr]
+        
+        return X, Y
+
+
+def arr_to_list(arr):
+        
+        temp = []
+        for i, j in arr :
+                temp.append((int(i),int(j)))
+        
+        return temp
