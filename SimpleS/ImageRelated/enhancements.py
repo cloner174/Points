@@ -52,11 +52,11 @@ class ErosAndDilat:
         now = datetime.datetime.now()
         now = now.strftime('%Y%m%d-%H%M%S')
         if self.file_name is not None:
-            erofile_path = f"/{self.file_name}_Erosion_{now}WITHsize{self.erosion_size}WITHshape{self.erosion_shape}.png"
-            dilafile_path = f"/{self.file_name}_Dilatation{now}WITHsize{self.dilatation_size}WITHshape{self.dilation_shape}.png"
+            erofile_path = f"{self.save_path}/{self.file_name}_Erosion_{now}WITHsize{self.erosion_size}WITHshape{self.erosion_shape}.png"
+            dilafile_path = f"{self.save_path}/{self.file_name}_Dilatation{now}WITHsize{self.dilatation_size}WITHshape{self.dilation_shape}.png"
         else:
-            erofile_path = f"/Erosion_{now}WITHsize{self.erosion_size}WITHshape{self.erosion_shape}.png"
-            dilafile_path = f"/Dilatation_{now}WITHsize{self.dilatation_size}WITHshape{self.dilation_shape}.png"
+            erofile_path = f"{self.save_path}/Erosion_{now}WITHsize{self.erosion_size}WITHshape{self.erosion_shape}.png"
+            dilafile_path = f"{self.save_path}/Dilatation_{now}WITHsize{self.dilatation_size}WITHshape{self.dilation_shape}.png"
         if self.erosion_result is not None:
             plt.imsave(erofile_path, self.erosion_result)
         if self.dilatation_result is not None:
@@ -83,13 +83,17 @@ class ErosAndDilat:
         self.save_path = save_path
         self.file_name = file_name
         if self.src is None:
-            src = cv.imread(cv.samples.findFile(self.image_path))
-            src = cv.cvtColor(src, cv.COLOR_BGR2RGB)
-            if src is None:
-                print('Could not open or find the image: ', self.image_path)
-                exit(0)
-            else:
-                self.src = src
+            try:
+                src = cv.imread(cv.samples.findFile(self.image_path))
+                src = cv.cvtColor(src, cv.COLOR_BGR2RGB)
+                if src is None:
+                    print('Could not open or find the image: ', self.image_path)
+                    exit(0)
+                else:
+                    self.src = src
+            except:
+                raise FileNotFoundError("Please check again the input file that was pased into this class")
+                
         else:
             pass
         if eros:
