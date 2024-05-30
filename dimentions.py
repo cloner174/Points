@@ -1,17 +1,36 @@
 import datetime
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from scipy.ndimage import binary_dilation
-
+from utils import save_path_generator
 
 class Dim3:
     
-    def __init__(self) -> None:
+    def __init__(self):
         pass
     
+    
     @staticmethod
-    def rotate_3d_points(points, theta, axis='z'):
+    def read_off_file(file_path):
+        """ It will return 2Object  Vertices  and  Faces. """
+        with open(file_path, 'r') as file:
+                if file.readline().strip() != "OFF":
+                        raise ValueError("Not a valid OFF file")
+                n_vertices, n_faces, _ = map(int, file.readline().strip().split())
+                vertices = [tuple(map(float, file.readline().strip().split())) for _ in range(n_vertices)]
+                faces = [tuple(map(int, file.readline().strip().split()[1:])) for _ in range(n_faces)]
+                vertices = np.asarray(vertices)
+                print("Secssesful . Vertices")
+                faces = np.asarray(faces)
+                print("Secssesful . Faces")
+        
+        return vertices, faces
+    
+    
+    @staticmethod
+    def rotate_points(points, theta, axis='z'):
         """Rotate 3D points around the specified axis by theta degrees."""
         theta = np.radians(theta)
         if axis == 'x':
@@ -35,8 +54,9 @@ class Dim3:
         
         return np.dot(points, rot_matrix.T)
     
+    
     @staticmethod
-    def plot_3d_points(v, f=None, axis = 'on', title = '3D Data Visualization', faces_colors = 'blue', alpha=0.75, linewidths=1, edgecolors='r', point_color='blue',show =True, save=False, file_name = None ):
+    def plot_points(v, f=None, axis = 'on', title = '3D Data Visualization', faces_colors = 'blue', alpha=0.75, linewidths=1, edgecolors='r', point_color='blue',show =True, save=False, save_path = None, file_name = None ):
         """
         Plot 3D points or a mesh from vertices and optionally faces.
         
@@ -83,14 +103,8 @@ class Dim3:
                                 file_name = title
                 plt.title(title)
         if save:
-                if file_name is not None:
-                        if not file_name.endswith('.png') or not file_name.endswith('.jpg'):
-                                file_name = file_name + '.png'
-                else:
-                        now = datetime.datetime.now()
-                        now = now.strftime('%Y%m%d-%H%M%S')
-                        file_name = f'Fig{now}.png'
-                plt.savefig(file_name)
+                path_to_save_file = save_path_generator(file_name,save_path, flag=None)
+                plt.savefig(path_to_save_file)
         if show:
                 plt.show()
         else:
@@ -98,8 +112,9 @@ class Dim3:
                 plt.close()
                 return
     
+    
     @staticmethod
-    def create_bool_image_from_3d_points(points, image_size=(500, 500)):
+    def create_bool_image_from_points(points, image_size=(500, 500),save = False, save_path = None, file_name = None):
         """
         Create a grayscale image from 3D points by projecting them onto a 2D plane using the z-coordinate
         as intensity.
@@ -127,16 +142,81 @@ class Dim3:
         for (point, intensity) in zip(scaled_points.astype(int), z_scaled.astype(np.uint8)):
                 current_intensity = image[point[1], point[0]]
                 image[point[1], point[0]] = max(current_intensity, intensity)  # Use the maximum intensity if overlapping
-        
+        if save:
+                path_to_save = save_path_generator(file_name,save_path, flag=None)
+                plt.imsave(path_to_save, image )
         return image
     
+    
     @staticmethod
-    def fill_points(image, iterations=5, structure=None, structure_like = (3,3) ):
+    def fill_points(image, iterations=5, structure=None, structure_like = (3,3) , save = False, save_path = None, file_name = None):
         """Fill in the gaps in a binary image using morphological dilation."""
         if structure is None:
                 structure = np.ones(structure_like)
-        filled_image = binary_dilation(image, structure=structure, iterations=iterations)
-        
+        try:
+                filled_image = binary_dilation(image, structure=structure, iterations=iterations)
+        except Exception as e:
+                try:
+                        filled_image = binary_dilation(image, structure=(3,3,3), iterations=iterations)
+                except:
+                        raise ValueError(f"{e}")
+        if save:
+                save_path_generator(file_name, save_path, flag=None)
         return filled_image
     
+    
+    def plot_3d_points(points, title = '3D Points Plot', labels = 'on', elev=None, azim=None,save = False,save_path=None, file_name = None):
+        """
+        Plot and optionally save a 3D plot of points with specified view angles.
+        Args:
+        - points (array-like): A list or array of points where each point is a list or tuple of three floats (x, y, z).
+        - save_path (str, optional): Path to save the plot image. If None, the plot will not be saved.
+        - elev (float, optional): Elevation angle in the z plane for viewing. If None, the angle is not adjusted.
+        - azim (float, optional): Azimuth angle in the x,y plane for viewing. If None, the angle is not adjusted.
+        """
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        # x, y, z coordinates from points
+        x = [p[0] for p in points]
+        y = [p[1] for p in points]
+        z = [p[2] for p in points]
+        ax.scatter(x, y, z, )
+        if elev is not None or azim is not None:
+                ax.view_init(elev=elev, azim=azim)
+        if labels.lower() == 'on':
+                ax.set_xlabel('X Coordinate')
+                ax.set_ylabel('Y Coordinate')
+                ax.set_zlabel('Z Coordinate')
+        else:
+                plt.axis('off')
+        ax.set_title(title)
+        plt.show()
+        if save:
+                path_to_save = save_path_generator(file_name, save_path, flag=None)
+                print(f"Plot saved to {path_to_save}")
+
+class Dim2:
+        def __init__(self):
+               pass
+        
+        @staticmethod
+        def create_flat_image(size=(750, 750), color_mode='RGB', color = 'White'):
+                """
+                Create a white image of the specified size and color mode.
+                Parameters:
+                size (tuple): The dimensions of the image (width, height).
+                color_mode (str): The color mode of the image, either 'RGB' or 'Gray'.
+                Returns:
+                numpy.ndarray: The created white image.
+                """
+                col = 255 if color.lower() == 'white' else 0
+                if color_mode.lower() == 'rgb':
+                        image = np.ones((size[1], size[0], 3), dtype=np.uint8) * col
+                elif color_mode.lower() == 'gray':
+                        image = np.ones((size[1], size[0]), dtype=np.uint8) * col
+                else:
+                        raise ValueError("Invalid color mode. Choose 'RGB' or 'Gray'.")
+                return image
+
 #end#
+
