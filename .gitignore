@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 Simple-Space/parall.py
-
+new.md
 # C extensions
 *.so
 
