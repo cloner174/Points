@@ -7,7 +7,7 @@
 - [Structure](#structure)
 - [Submodules](#submodules)
 + Points
-  - [dim3](#dim3)
+  - [Dim3 Class](#dim3-class)
 + ImageRelated
   - [enhancements.py](#imagerelated-scripts--enhancementspy)
   - [basics.py](#imagerelated-scripts--basicspy)
@@ -32,7 +32,8 @@ simple-space/
 │   ├── utils.py
 │   └── Points/
 │       ├── __init__.py
-│       ├── dimentions.py
+│       ├── dim3.py
+│       ├── dim2.py
 │   └── ImageRelated/
 │       ├── __init__.py
 │       ├── enhancements.py
@@ -44,18 +45,16 @@ simple-space/
 ## Submodules
 1. Points
 
-    - dim3.py:
-     Contains functions for 3D point data processing and visualization.
-    - dim2.py:
-     Contains some simple and basic functions for 2D point data processing and visualization.
+    - dimentions.py:
+     Contains the Dim3 and Dim2 classes for 3D and 2D point data processing and visualization.
 2. ImageRelated
 
     - enhancements.py: Provides functions for image enhancement, including erosion and dilation.
     - basics.py: Contains basic image processing utilities like edge detection and color inversion.
 
-## dim3
+## Dim3 Class
 
-The dim3 script offers tools for visualizing and processing 3D point data in Python, using libraries such as numpy, matplotlib, and scipy.
+The Dim3 class offers tools for visualizing and processing 3D point data in Python, using libraries such as numpy, matplotlib, and scipy.
 
 ### Features
 
@@ -66,19 +65,22 @@ The dim3 script offers tools for visualizing and processing 3D point data in Pyt
 
 ### Usage
 
-#### Initializing the Class
+#### Importing
 
 ```python
 
-from SimpleS.Points import dim3
+from SimpleS.Points.dimentions import Dim3
 
+# Or even :
+
+from SimpleS import Dim3
 ```
 ```python
 # But I recommend You Simply Use this one:
 
 from SimpleS.Points.dim3 import *
 
-# This one Lets you use all the functions inside dim3 script without any initialize word;
+# This one Lets you use all the functions inside Dim3 class without any initialize word;
 # FOR EXAMPLE:
 
 dim3.rotate_points()
@@ -93,7 +95,7 @@ from SimpleS.Points import dim3
 
 dir(dim3)
 ```
-This will show you the names of all functions inside the dim3 script.
+This will show you the names of all functions inside the Dim3 class.
 
 After that, we will return to our simpler method:
 
@@ -126,7 +128,7 @@ image = create_bool_image_from_points(points)
 ```python
 filled_image = fill_points(binary_image)
 ```
-For more detailed information on each method, please refer to the inline documentation within the class methods.
+For more detailed information on each method, please refer to the inline documentation within the module methods.
 
 
 ## ImageRelated Scripts : enhancements.py
@@ -149,7 +151,7 @@ To use this script, you need to create an instance of the ErosAndDilat class wit
 
 ```python
 
-from SimpleS.enhancements import ErosAndDilat
+from SimpleS.ImageRelated.enhancements import ErosAndDilat
 
 # Initialize with an image path
 image_processor = ErosAndDilat('path/to/your/image.jpg')
@@ -191,15 +193,15 @@ This script, titled "basics", provides a collection of image processing utilitie
 
 ```python
 
-from SimpleS import basics
+from SimpleS.ImageRelated import basics
 
 # Or :
 
-from SimpleS.basics import invert_image_color
+from SimpleS.ImageRelated.basics import invert_image_color
 
 #Or:
 
-from SimpleS.basics import * # Access to all
+from SimpleS.ImageRelated.basics import * # Access to all
 
 ```
 
@@ -219,7 +221,7 @@ from SimpleS.basics import * # Access to all
 - Example:
 
 ```python
-from SimpleS.basics import *
+from SimpleS.ImageRelated.basics import *
 
 show_image('path_to_image.png', title="Example Image", save=True, save_path='./', file_name='example_image.png')
 ```
@@ -236,7 +238,7 @@ show_image('path_to_image.png', title="Example Image", save=True, save_path='./'
 - Example:
 
 ```python
-from SimpleS.basics import *
+from SimpleS.ImageRelated.basics import *
 
 filled_image = fill_shape(image, points, color=(255, 0, 0))
 ```
@@ -251,7 +253,7 @@ filled_image = fill_shape(image, points, color=(255, 0, 0))
 + Example:
 
 ```python
-from SimpleS.basics import *
+from SimpleS.ImageRelated.basics import *
 
 grayscale_image = force_image_to_GRAYSCALE(color_image)
 ```
@@ -270,7 +272,7 @@ grayscale_image = force_image_to_GRAYSCALE(color_image)
 + Example:
 
 ```python
-from SimpleS.basics import *
+from SimpleS.ImageRelated.basics import *
 
 binary_image = read_image_in_grayscale('path_to_image.png', thrhold=127, type='THRESH_BINARY', also_make_it_binary=True)
 ```
@@ -290,7 +292,7 @@ binary_image = read_image_in_grayscale('path_to_image.png', thrhold=127, type='T
 
 ```python
 
-from SimpleS.basics import *
+from SimpleS.ImageRelated.basics import *
 
 binary_image = simple_binary_image_creator(points, image_size=(100, 100))
 ```
