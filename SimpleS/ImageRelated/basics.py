@@ -9,6 +9,7 @@ import scipy.ndimage as ndi
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw
 from SimpleS.utils import save_path_generator
+from scipy.ndimage import binary_dilation
 
 
 
@@ -69,6 +70,24 @@ def show_image(image, title="Image", c_map = 'gray',interpolation = 'nearest',sa
     plt.imshow(image, cmap=c_map, interpolation=interpolation)
     
     plt.show()
+
+
+def fill_inside_3d_image(image, iterations=5, structure=None, structure_like = (3,3) , save = False, save_path = None, file_name = None):
+        """Fill in the gaps in a binary image using morphological dilation."""
+        if structure is None:
+                structure = np.ones(structure_like)
+        try:
+                filled_image = binary_dilation(image, structure=structure, iterations=iterations)
+        except Exception as e:
+                try:
+                        filled_image = binary_dilation(image, structure=(3,3,3), iterations=iterations)
+                except:
+                        raise ValueError(f"{e}")
+        if save:
+                path_to_save = save_path_generator(file_name, save_path, flag=None)
+                plt.imsave(path_to_save, image )
+        
+        return filled_image
 
 
 def fill_shape_in_image(image, points, color = (255, 0, 0)):

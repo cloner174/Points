@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-from scipy.ndimage import binary_dilation
 from SimpleS.utils import save_path_generator
 
 
@@ -139,25 +138,7 @@ def create_bool_image_from_3d_points(points, image_size=(500, 500),save = False,
                 path_to_save = save_path_generator(file_name,save_path, flag=None)
                 plt.imsave(path_to_save, image )
         return image
-    
-    
 
-def fill_inside_3d_points(image, iterations=5, structure=None, structure_like = (3,3) , save = False, save_path = None, file_name = None):
-        """Fill in the gaps in a binary image using morphological dilation."""
-        if structure is None:
-                structure = np.ones(structure_like)
-        try:
-                filled_image = binary_dilation(image, structure=structure, iterations=iterations)
-        except Exception as e:
-                try:
-                        filled_image = binary_dilation(image, structure=(3,3,3), iterations=iterations)
-                except:
-                        raise ValueError(f"{e}")
-        if save:
-                save_path_generator(file_name, save_path, flag=None)
-        return filled_image
-    
-    
 
 def plot_3d_points(points, title = '3D Points Plot', labels = 'on', elev=None, azim=None,save = False,save_path=None, file_name = None):
         """
