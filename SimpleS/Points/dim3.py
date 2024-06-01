@@ -1,23 +1,12 @@
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from scipy.ndimage import binary_dilation
 from SimpleS.utils import save_path_generator
-import cv2
-import scipy.ndimage as ndi
-from skimage import img_as_ubyte
-from skimage.morphology import skeletonize
 
 
-class Dim3:
-    
-    def __init__(self):
-        pass
-    
-    
-    @staticmethod
-    def read_off_file(file_path):
+
+def read_off_file(file_path):
         """ It will return 2Object  Vertices  and  Faces. """
         with open(file_path, 'r') as file:
                 if file.readline().strip() != "OFF":
@@ -33,8 +22,8 @@ class Dim3:
         return vertices, faces
     
     
-    @staticmethod
-    def rotate_points(points, theta, axis='z'):
+
+def rotate_3d_points(points, theta, axis='z'):
         """Rotate 3D points around the specified axis by theta degrees."""
         theta = np.radians(theta)
         if axis == 'x':
@@ -59,8 +48,8 @@ class Dim3:
         return np.dot(points, rot_matrix.T)
     
     
-    @staticmethod
-    def plot_points(v, f=None, axis = 'on', title = '3D Data Visualization', faces_colors = 'blue', alpha=0.75, linewidths=1, edgecolors='r', point_color='blue',show =True, save=False, save_path = None, file_name = None ):
+
+def plot_3d_points_using_vertices(v, f=None, axis = 'on', title = '3D Data Visualization', faces_colors = 'blue', alpha=0.75, linewidths=1, edgecolors='r', point_color='blue',show =True, save=False, save_path = None, file_name = None ):
         """
         Plot 3D points or a mesh from vertices and optionally faces.
         
@@ -117,8 +106,8 @@ class Dim3:
                 return
     
     
-    @staticmethod
-    def create_bool_image_from_points(points, image_size=(500, 500),save = False, save_path = None, file_name = None):
+
+def create_bool_image_from_3d_points(points, image_size=(500, 500),save = False, save_path = None, file_name = None):
         """
         Create a grayscale image from 3D points by projecting them onto a 2D plane using the z-coordinate
         as intensity.
@@ -152,8 +141,8 @@ class Dim3:
         return image
     
     
-    @staticmethod
-    def fill_points(image, iterations=5, structure=None, structure_like = (3,3) , save = False, save_path = None, file_name = None):
+
+def fill_inside_3d_points(image, iterations=5, structure=None, structure_like = (3,3) , save = False, save_path = None, file_name = None):
         """Fill in the gaps in a binary image using morphological dilation."""
         if structure is None:
                 structure = np.ones(structure_like)
@@ -169,8 +158,8 @@ class Dim3:
         return filled_image
     
     
-    @staticmethod
-    def plot_3d_points(points, title = '3D Points Plot', labels = 'on', elev=None, azim=None,save = False,save_path=None, file_name = None):
+
+def plot_3d_points(points, title = '3D Points Plot', labels = 'on', elev=None, azim=None,save = False,save_path=None, file_name = None):
         """
         Plot and optionally save a 3D plot of points with specified view angles.
         Args:
@@ -200,95 +189,5 @@ class Dim3:
                 path_to_save = save_path_generator(file_name, save_path, flag=None)
                 print(f"Plot saved to {path_to_save}")
 
-
-
-class Dim2:
-    
-    def __init__(self):
-        pass
-        
-    @staticmethod
-    def create_flat_image(size=(750, 750), color_mode='RGB', color = 'White'):
-        """
-        Create a white image of the specified size and color mode.
-        Parameters:
-        size (tuple): The dimensions of the image (width, height).
-        color_mode (str): The color mode of the image, either 'RGB' or 'Gray'.
-        Returns:
-        numpy.ndarray: The created white image.
-        """
-        col = 255 if color.lower() == 'white' else 0
-        if color_mode.lower() == 'rgb':
-                image = np.ones((size[1], size[0], 3), dtype=np.uint8) * col
-        elif color_mode.lower() == 'gray':
-                image = np.ones((size[1], size[0]), dtype=np.uint8) * col
-        else:
-                raise ValueError("Invalid color mode. Choose 'RGB' or 'Gray'.")
-        return image
-    
-    
-    @staticmethod
-    def detect_centerline(image,
-                                thrhold1 = 7,
-                                thrhold2 = 255,
-                                c_map ='gray',
-                                fig_size =(6, 6),
-                                plt_title ='Medial Axis',
-                                plt_axis=True,
-                                show = True,
-                                save=False,
-                                save_path = None,
-                                silently = False, 
-                                just_return_medial = False):
-        if isinstance(image, str):
-                img = cv2.imread(image, cv2.IMREAD_GRAYSCALE)
-                if img is None:
-                        print("Error loading image")
-                        return
-        try:
-                _, binary = cv2.threshold(image, thrhold1, thrhold2, cv2.THRESH_BINARY)
-                binary = binary > 0
-                skeleton = skeletonize(binary)
-        except:
-                try:
-                        temp = ndi.distance_transform_edt(image)
-                        _, binary = cv2.threshold(temp, thrhold1, thrhold2, cv2.THRESH_BINARY)
-                        binary = binary > 0
-                        skeleton = skeletonize(binary)
-                except:
-                        try:
-                                skeleton = skeletonize(img)
-                        except:
-                                print("Error reading image")
-                                print("Nothing worked!")
-                                return
-        skeleton = img_as_ubyte(skeleton)
-        if just_return_medial:
-                return skeleton
-        else:
-                pass
-        plt.figure(figsize=fig_size)
-        plt.imshow(skeleton, cmap=c_map) if show else None
-        plt.title(plt_title) if show else None
-        if plt_axis:
-                plt.axis('off')
-        if save:
-                if save_path:
-                        if not save_path.endswith(('.png' ,'.jpg')):
-                                save_path = os.path.join(save_path, f'{plt_title}_{thrhold1}_{c_map}.jpg')
-                        else:
-                                pass
-                else:
-                        save_path = f'{plt_title}_{thrhold1}_{c_map}.jpg'
-                plt.imsave(save_path,skeleton, cmap=c_map)
-        if show:
-                plt.show()
-        else:
-                if save and not silently:
-                        print(f"Result is Saved in {save_path}")
-                        return
-                else:
-                        return
-        
 #end#
 

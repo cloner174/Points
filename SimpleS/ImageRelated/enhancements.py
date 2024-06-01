@@ -3,8 +3,7 @@ import os
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
-import datetime
-
+from SimpleS.utils import save_path_generator
 print(" This is an Enhanced Version of the Original Script Provided by OpenCV site. ")
 #https://www.github.com/cloner174
 class ErosAndDilat:
@@ -18,6 +17,8 @@ class ErosAndDilat:
             self.src = image
         self.dilatation_result = None
         self.erosion_result = None
+        self.path_to_erosion_result = None
+        self.path_to_dilatation_result = None
     
     def erosion(self):
         erosion_shape = self.erosion_shape
@@ -49,21 +50,17 @@ class ErosAndDilat:
     
     def save_result(self) :
         
-        now = datetime.datetime.now()
-        now = now.strftime('%Y%m%d-%H%M%S')
-        if self.file_name is not None:
-            erofile_path = f"{self.save_path}/{self.file_name}_Erosion_{now}WITHsize{self.erosion_size}WITHshape{self.erosion_shape}.png"
-            dilafile_path = f"{self.save_path}/{self.file_name}_Dilatation{now}WITHsize{self.dilatation_size}WITHshape{self.dilation_shape}.png"
-        else:
-            erofile_path = f"{self.save_path}/Erosion_{now}WITHsize{self.erosion_size}WITHshape{self.erosion_shape}.png"
-            dilafile_path = f"{self.save_path}/Dilatation_{now}WITHsize{self.dilatation_size}WITHshape{self.dilation_shape}.png"
         if self.erosion_result is not None:
+            erofile_path = save_path_generator(self.file_name, self.save_path, flag = f'Erosion_SIZE{self.erosion_size}_SHAPE{self.erosion_shape}')
             plt.imsave(erofile_path, self.erosion_result)
+            self.path_to_erosion_result = erofile_path
         if self.dilatation_result is not None:
+            dilafile_path = save_path_generator(self.file_name, self.save_path, flag = f'Dilatation_SIZE{self.dilatation_size}SHAPE{self.dilation_shape}')
             plt.imsave(dilafile_path, self.dilatation_result)
-
+            self.path_to_dilatation_result = dilafile_path
         return
     
+
     def main(self,
                 eros = True, erosion_size=1, erosion_shape=0,#erosion_shape -> can be 0 or 1 or 2
                 dilate = True, dilatation_size=1, dilation_shape=0,#erosion_shape -> can be 0 or 1 or 2
@@ -79,7 +76,6 @@ class ErosAndDilat:
         self.erosion_shape = erosion_shape
         self.dilatation_size = dilatation_size
         self.dilation_shape = dilation_shape
-        os.makedirs(save_path, exist_ok=True)
         self.save_path = save_path
         self.file_name = file_name
         if self.src is None:

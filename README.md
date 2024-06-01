@@ -7,7 +7,7 @@
 - [Structure](#structure)
 - [Submodules](#submodules)
 + Points
-  - [Dim3 Class](#dim3-class)
+  - [dim3](#dim3)
 + ImageRelated
   - [enhancements.py](#imagerelated-scripts--enhancementspy)
   - [basics.py](#imagerelated-scripts--basicspy)
@@ -44,16 +44,18 @@ simple-space/
 ## Submodules
 1. Points
 
-    - dimentions.py:
-     Contains the Dim3 and Dim2 classes for 3D and 2D point data processing and visualization.
+    - dim3.py:
+     Contains functions for 3D point data processing and visualization.
+    - dim2.py:
+     Contains some simple and basic functions for 2D point data processing and visualization.
 2. ImageRelated
 
     - enhancements.py: Provides functions for image enhancement, including erosion and dilation.
     - basics.py: Contains basic image processing utilities like edge detection and color inversion.
 
-## Dim3 Class
+## dim3
 
-The Dim3 class offers tools for visualizing and processing 3D point data in Python, using libraries such as numpy, matplotlib, and scipy.
+The dim3 script offers tools for visualizing and processing 3D point data in Python, using libraries such as numpy, matplotlib, and scipy.
 
 ### Features
 
@@ -68,38 +70,35 @@ The Dim3 class offers tools for visualizing and processing 3D point data in Pyth
 
 ```python
 
-from SimpleS.Points.dimentions import Dim3
+from SimpleS.Points import dim3
 
-# Or even :
-
-from SimpleS import Dim3
 ```
 ```python
 # But I recommend You Simply Use this one:
 
-from SimpleS.Dim3 import *
+from SimpleS.Points.dim3 import *
 
-# This one Lets you use all the functions inside Dim3 class without any initialize word;
+# This one Lets you use all the functions inside dim3 script without any initialize word;
 # FOR EXAMPLE:
 
-Dim3.rotate_points()
+dim3.rotate_points()
 
 # WOULD BE JUST:
 
-rotate_3d_points()
+rotate_points()
 ```
 **If you encounter any trouble determining the specifics of an import, such as which functions it includes, simply use the dir() function:**
 ```python
-from SimpleS import Dim3
+from SimpleS.Points import dim3
 
-dir(Dim3)
+dir(dim3)
 ```
-This will show you the names of all functions inside the Dim3 class.
+This will show you the names of all functions inside the dim3 script.
 
 After that, we will return to our simpler method:
 
 ```python
-from SimpleS.Dim3 import *
+from SimpleS.Points.dim3 import *
 ```
 
 #### Rotating 3D Points

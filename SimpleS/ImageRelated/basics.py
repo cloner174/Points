@@ -71,7 +71,7 @@ def show_image(image, title="Image", c_map = 'gray',interpolation = 'nearest',sa
     plt.show()
 
 
-def fill_shape(image, points, color = (255, 0, 0)):
+def fill_shape_in_image(image, points, color = (255, 0, 0)):
     """
     Fill an area of a shape in an image based on the points defining the edges of the shape.
     Parameters:
@@ -86,7 +86,7 @@ def fill_shape(image, points, color = (255, 0, 0)):
     return image
 
 
-def force_image_to_GRAYSCALE(image):
+def force_image_to_grayscale(image):
     holder = 0.2989
     keeper = 0.5870
     informer = 0.1140

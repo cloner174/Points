@@ -5,13 +5,18 @@ def save_path_generator(filename = None, path = None, flag = None):
         
         try:
                 if path is not None:
-                        path = path
+                        if not path.endswith('.png') or not path.endswith('.jpg'):
+                                path = path
+                        else:
+                                path = 'results'
                 else:
                         path = 'results'
                 os.makedirs(path,exist_ok=True)
                 if filename is not None:
                         if not filename.endswith('.png') or not filename.endswith('.jpg'):
                                 filename = filename + '.png'
+                        else:
+                                filename = filename
                 else:
                         now = datetime.datetime.now()
                         now = now.strftime('%Y%m%d-%H%M%S')
