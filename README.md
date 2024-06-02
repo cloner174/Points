@@ -6,12 +6,15 @@
 - [Installation](#installation)
 - [Structure](#structure)
 - [Submodules](#submodules)
-+ Points
-  - [Dim3 Module](#Dim3-module)
-  - Dim2 Module
-+ ImageRelated
-  - [enhancements.py](#imagerelated-scripts--enhancementspy)
-  - [basics.py](#imagerelated-scripts--basicspy)
+    - Points
+        - [Dim3 Module](#Dim3-module)
+        - Dim2 Module
+        - [Circle Module](#Circle-module)
+        - [Line Module](#Line-module)
+        - [Triangle Module](#Triangle-module)
+    - ImageRelated
+        - [enhancements.py](#imagerelated-scripts--enhancementspy)
+        - [basics.py](#imagerelated-scripts--basicspy)
 - [License](#license)
 - [Contact](#contact)
 
@@ -31,10 +34,14 @@ simple-space/
 ├── SimpleS/
 │   ├── __init__.py
 │   ├── utils.py
+│   ├── detection.py
 │   └── Points/
 │       ├── __init__.py
 │       ├── Dim3.py
 │       ├── Dim2.py
+│       ├── Circle.py
+│       ├── Line.py
+│       ├── Triangle.py
 │   └── ImageRelated/
 │       ├── __init__.py
 │       ├── enhancements.py
@@ -82,7 +89,7 @@ from SimpleS.Points.Dim3 import *
 # This one Lets you use all the functions inside Dim3 module without any initialize word;
 # FOR EXAMPLE:
 
-Dim3.rotate_points()
+Dim3.rotate_3d_points()
 
 # WOULD BE JUST:
 
@@ -105,31 +112,160 @@ from SimpleS.Points.Dim3 import *
 #### Rotating 3D Points
 
 ```python
-rotated_points = rotate_points(points, 45, 'z')
+rotated_points = rotate_3d_points(points, 45, 'z')
 ```
 
 #### Plotting 3D Points or Mesh
 
 ```python
-plot_points(vertices, faces)
+plot_3d_points_using_vertices(vertices, faces)
 ```
 
 
 #### Creating a Grayscale Image from 3D Points
 
 ```python
-image = create_bool_image_from_points(points)
+image = create_bool_image_from_3d_points(points)
 ```
 
 
 #### Filling Points in a Binary Image
 
 ```python
-filled_image = fill_points(binary_image)
+filled_image = fill_3d_points(binary_image)
 ```
 For more detailed information on each method, please refer to the inline documentation within the module methods.
 
 
+## Circle Module
+
+The Circle module provides functions for handling and visualizing circles and arcs.
+
+### Features
+
+-    **Plot Circles Along Arc:** Plot circles along a defined arc.
+-    **Calculate Arc Angle:** Calculate the angle between two points on a circle.
+-    **Calculate Circle Center:** Determine the center of a circle passing through three points.
+-    **Position Along Curve:** Calculate the position of a point along a Bezier curve.
+-    **Fit and Plot Polynomial Curve:** Fit and plot a polynomial curve through given points.
+-    **Tangent Circles:** Plot tangent circles along a line or between lines.
+-    **Smallest Enclosing Circle:** Find the smallest circle that encloses a set of points.
+
+### Usage
+
+```python
+
+from SimpleS.Points.Circle import *
+
+# Plot Circles Along Arc
+center = (0, 0)
+radius = 5
+plot_circles_along_arc(center, radius, 0, 180, 1)
+
+# Calculate Arc Angle
+start_point = (1, 0)
+end_point = (0, 1)
+angle = calculate_arc_angle(center, start_point, end_point)
+print('Arc Angle is : ', angle)
+
+# Calculate Circle Center
+p1 = (0, 0)
+p2 = (1, 1)
+p3 = (1, 0)
+circle_center = calculate_circle_center(p1, p2, p3)
+print('Circle Center is : ', circle_center)
+
+# Fit and Plot Polynomial Curve
+x_points = [0, 1, 2, 3]
+y_points = [1, 3, 2, 5]
+poly = create_and_fit_curve_with_points(x_points, y_points, 2)
+plot_a_curve(x_points, y_points, degree= 2)
+
+# Plot Tangent Circles Along Line
+start_point = np.array([0, 0])
+end_point = np.array([10, 0])
+plot_tangent_circles_along_line(1, start_point, end_point, 5)
+
+# Smallest Enclosing Circle
+points = np.array([[0, 0], [1, 1], [1, 0]])
+smallest_circle = find_smallest_circle(points)
+print('Smallest Enclosing Circle is : ', smallest_circle)
+```
+## Line Module
+
+The Line module includes functions for handling and plotting lines.
+
+
+### Features
+
+-    **Find Line Equation:** Calculate the line equation given two points.
+-    **Plot Line on Figure:** Plot a line between two points on a matplotlib figure.
+-    **Find Parallel Lines:** Calculate parallel lines at a given distance from an original line.
+-    **Calculate Line Points:** Calculate points along a line segment.
+-    **Shortest Distance to Line:** Find the shortest distance from a point to a line.
+-    **Plot Bisectors:** Plot perpendicular bisectors of lines connecting given points.
+
+### Usage
+
+```python
+
+from SimpleS.Points.Line import *
+
+# Find Line Equation
+A = (0, 0)
+B = (1, 1)
+line_eq = find_line_equation(A, B)
+
+# Plot Line on Figure
+plot_line_on_figure(A, B)
+
+# Find Parallel Lines
+distance = 1
+parallel_lines = find_parallel_lines(A, B, distance)
+plot_parallelـlines(A, B, distance)
+# Calculate Line Points
+line_points = simple_calculate_line_points(A, B)
+
+# Shortest Distance to Line
+point = (1, 0)
+shortest_distance = calculate_shortest_dist_point_to_line(point, A, B)
+print('Shortest Distance from Point -> (1, 0) to Line -> ( (0, 0), (1, 1) ) is :',shortest_distance)
+
+# Plot Bisectors
+points = [(0, 0), (1, 1), (2, 0)]
+plot_bisectors(points)
+
+```
+## Triangle Module
+
+The Triangle module provides functions for handling and plotting triangles.
+
+### Features
+
+-    **Calculate Triangle Area:** Compute the area of a triangle given its vertices.
+-    **Check Point in Triangle:** Determine if a point is inside a triangle.
+-    **Create and Plot Triangle:** Plot a triangle with given vertices.
+-    **Check Point Position vs Triangle:**Check and plot the position of a point relative to a triangle.
+
+### Usage
+
+```python
+
+from SimpleS.Points.Triangle import *
+
+# Calculate Triangle Area
+P1 = (1, -4)
+P2 = (3, 5)
+P3 = (2, 7)
+area = calculate_triangle_area(P1, P2, P3)
+
+# Create and Plot Triangle
+create_triangle_with_points(P1, P2, P3)
+
+# Check Point Position vs Triangle
+test_point = (1.5,-1)
+chech_points_pos_vs_triangle(P1, P2, P3, test_point)
+```
 ## ImageRelated Scripts : enhancements.py
 
 ### Introduction
