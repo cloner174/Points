@@ -174,6 +174,7 @@ def plot_3d_points(points, title = '3D Points Plot', labels = 'on', elev=None, a
         plt.show()
         if save:
                 path_to_save = save_path_generator(file_name, save_path, flag=None)
+                plt.savefig(path_to_save)
                 print(f"Plot saved to {path_to_save}")
 
 #end#
