@@ -1,4 +1,4 @@
-
+#in the name of GOD##
 import os
 import cv2
 import numpy as np
@@ -9,6 +9,13 @@ from skimage import img_as_ubyte
 from skimage.morphology import skeletonize
 
 
+def calculate_midpoint(A, B):
+    """Calculate the midpoint between two points A and B."""
+    x1, y1 = A
+    x2, y2 = B
+    mid_x = (x1 + x2) / 2
+    mid_y = (y1 + y2) / 2
+    return (mid_x, mid_y)
 
 
 def rotate_2d_points(points, theta=0, axis=None):
@@ -35,14 +42,13 @@ def rotate_2d_points(points, theta=0, axis=None):
             [np.cos(theta), -np.sin(theta)],
             [np.sin(theta), np.cos(theta)]
         ])
+    
     return np.dot(points, rot_matrix.T)
-
-
 
 
 def create_flat_image(size=(750, 750), color_mode='RGB', color = 'White',return_ = True, save = False, save_path = None, file_name = None):
         """
-        Create a white image of the specified size and color mode.
+        Create an image of the specified size and color mode.
         Parameters:
         size (tuple): The dimensions of the image (width, height).
         color_mode (str): The color mode of the image, either 'RGB' or 'Gray'.
@@ -50,6 +56,7 @@ def create_flat_image(size=(750, 750), color_mode='RGB', color = 'White',return_
         numpy.ndarray: The created white image.
         """
         col = 255 if color.lower() == 'white' else 0
+        
         if color_mode.lower() == 'rgb':
                 image = np.ones((size[1], size[0], 3), dtype=np.uint8) * col
         elif color_mode.lower() == 'gray':
@@ -59,6 +66,7 @@ def create_flat_image(size=(750, 750), color_mode='RGB', color = 'White',return_
         if save:
                 path_to_save = save_path_generator(file_name, save_path, flag=f'{size}_{color}')
                 plt.imsave(path_to_save, image)
+        
         if return_:
                 return image
         else:

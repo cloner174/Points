@@ -191,6 +191,9 @@ def advance_binary_image_creator(points, shape_size = None):
 
 
 def detect_edges(image, 
+                 detection_distance_start = 5,
+                 detection_distance_end = 10,
+                 how_many_detection = 4,
                  n1=100, 
                  n2=100,  
                  show_edges = True, 
@@ -199,12 +202,9 @@ def detect_edges(image,
                  title_for_detected_contours = 'Detected Edges with Contours',
                  return_edges = False, 
                  return_contours = False, 
-                 range_color_start=100, 
-                 range_color_end=255, 
                  save = False,
                  save_path = None,
                  file_name = None):
-    
     if isinstance(image, str):
         image = cv2.imread(image, cv2.IMREAD_GRAYSCALE)
         if image is None:
@@ -214,14 +214,12 @@ def detect_edges(image,
             raise ValueError("Image must be a grayscale image.")
     else:
         raise TypeError("Input must be a file path (str) or a grayscale image (numpy.ndarray).")
-    
     blurred_image = cv2.GaussianBlur(image, (5, 5), 0)
-    
+    _, binary_image_pure = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
     _, binary_image = cv2.threshold(blurred_image, 127, 255, cv2.THRESH_BINARY)
-    
+    dist_transform = cv2.distanceTransform(binary_image_pure, cv2.DIST_L2, 5)
     kernel = np.ones((5, 5), np.uint8)
     closed_image = cv2.morphologyEx(binary_image, cv2.MORPH_CLOSE, kernel)
-    
     edges = cv2.Canny(closed_image, n1, n2, apertureSize=3)
     if show_edges:
         plt.imshow(edges, cmap='gray')
@@ -231,30 +229,25 @@ def detect_edges(image,
     if save:
         path_to_save = save_path_generator(file_name, save_path, flag = 'DetectedEdges')
         plt.imsave(path_to_save, edges)
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    canvas = np.zeros_like(image)
-    for contour in contours:
-        color = np.random.randint(range_color_start, range_color_end, size=3, dtype=np.uint8)
-        color = tuple(map(int, color))
-        cv2.drawContours(canvas, [contour], -1, color, 2)
-    
-    canvas_rgb = cv2.cvtColor(canvas, cv2.COLOR_GRAY2BGR)
-    canvas_rgb = cv2.cvtColor(canvas_rgb, cv2.COLOR_BGR2RGB)
-    if show_contours:
-        plt.imshow(canvas_rgb)
-        plt.title(title_for_detected_contours)
-        plt.axis('off')
-        plt.show()
-    if save:
-        path_to_save = save_path_generator(file_name, save_path, flag = 'DetectedContours')
-        plt.imsave(path_to_save, canvas_rgb)
-    
+    for dd in np.linspace(start=detection_distance_start, stop=detection_distance_end, num=how_many_detection):
+        contours, _ = cv2.findContours((dist_transform >= dd).astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contour_img = np.zeros_like(dist_transform)
+        for contour in contours:
+            cv2.drawContours(contour_img, [contour], -1, (255), 1)
+        if show_contours:
+            plt.imshow(contour_img)
+            plt.title(f"{title_for_detected_contours} at Distance =  {dd}")
+            plt.axis('off')
+            plt.show()
+        if save:
+            path_to_save = save_path_generator(file_name, save_path, flag = f'DetectedContours_dist{dd}')
+            plt.imsave(path_to_save, contour_img)
     if return_edges and return_contours:
-        return edges, canvas
+        return edges, contour_img
     elif return_edges:
         return edges
     elif return_contours:
-        return canvas
+        return contour_img
     else:
         return
 #end#

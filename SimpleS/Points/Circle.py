@@ -2,8 +2,7 @@
 #
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.spatial import ConvexHull
-
+from numpy.polynomial import Polynomial
 
 
 def plot_circles_along_arc(center, radius, start_angle, end_angle, circle_radius):
@@ -18,11 +17,10 @@ def plot_circles_along_arc(center, radius, start_angle, end_angle, circle_radius
     fig, ax = plt.subplots()
     start_angle = np.deg2rad(start_angle)
     end_angle = np.deg2rad(end_angle)
-    # Calculate limit of circles for fit along the arc
+    #circles for fit along the arc
     arc_length = radius * (end_angle - start_angle)
     number_of_circles = int(arc_length / (2 * circle_radius))
     angle_increment = (end_angle - start_angle) / number_of_circles
-    # Plot each circle along the arc
     for i in range(number_of_circles + 1):
         angle = start_angle + i * angle_increment
         circle_center = (center[0] + (radius - circle_radius) * np.cos(angle),
@@ -54,10 +52,9 @@ def calculate_arc_angle(center, start_point, end_point):
     end_point = np.array(end_point)
     vector1 = start_point - center
     vector2 = end_point - center
-    # Calculate angles using atan2
+    #angles using atan2
     angle1 = np.arctan2(vector1[1], vector1[0])
     angle2 = np.arctan2(vector2[1], vector2[0])
-    # ensure a positive angle
     angle = angle2 - angle1
     if angle < 0:
         angle += 2 * np.pi
@@ -80,7 +77,7 @@ def calculate_circle_center(p1, p2, p3):
     # slopes of lines p1p2 and p2p3
     slope1 = (p2[1] - p1[1]) / (p2[0] - p1[0]) if p2[0] != p1[0] else float('inf')
     slope2 = (p3[1] - p2[1]) / (p3[0] - p2[0]) if p3[0] != p2[0] else float('inf')
-    # handle vertical lines
+    # vertical lines
     if slope1 == float('inf'):
         center_x = mid1[0]
         center_y = mid2[1] + (mid2[0] - center_x) / slope2
@@ -107,8 +104,57 @@ def position_of_point_along_curve(t, points):
     return points[0]
 
 
+def create_and_fit_curve_with_points(x_points, y_points, degree):
+    """
+    Fit a polynomial curve to the given data points and return the polynomial equation.
+    Args:
+    x_points (list): List of x-coordinates of the data points.
+    y_points (list): List of y-coordinates of the data points.
+    degree (int): Degree of the polynomial to fit.
+    Returns:
+    Polynomial: The fitted polynomial.
+    """
+    coefs = np.polyfit(x_points, y_points, degree)  # returns coefs in reverse order
+    poly = Polynomial(coefs[::-1])
+    return poly
+
+
+def plot_a_curve(x_points, y_points, degree):
+    """
+    Plot a curve by creating a new figure and axes.
+    Args:
+    x_points (list): List of x-coordinates of the data points.
+    y_points (list): List of y-coordinates of the data points.
+    degree (int): Degree of the polynomial to fit.
+    """
+    poly = create_and_fit_curve_with_points(x_points, y_points, degree)
+    x_new = np.linspace(min(x_points), max(x_points), 500)
+    y_new = poly(x_new)
+    fig, ax = plt.subplots()
+    ax.plot(x_points, y_points, 'o', label='Data points')
+    ax.plot(x_new, y_new, '-', label=f'Polynomial fit (degree {degree})')
+    ax.legend()
+    plt.show()
+
+
+def plot_curve_on_given_ax(ax, x_points, y_points, degree):
+    """
+    Plot a curve on an existing axes.
+    Args:
+    ax (matplotlib.axes.Axes): Existing matplotlib axes to plot on.
+    x_points (list): List of x-coordinates of the data points.
+    y_points (list): List of y-coordinates of the data points.
+    degree (int): Degree of the polynomial to fit.
+    """
+    poly = create_and_fit_curve_with_points(x_points, y_points, degree)
+    x_new = np.linspace(min(x_points), max(x_points), 500)
+    y_new = poly(x_new)
+    ax.plot(x_points, y_points, 'o', label='Data points')
+    ax.plot(x_new, y_new, '-', label=f'Polynomial fit (degree {degree})')
+    ax.legend()
+
+
 def bezier_tangent(t, points):
-    
     """ Calculate the tangent to the curve at parameter t. """
     derivative_points = [n * (p2 - p1) for n, (p1, p2) in enumerate(zip(points[:-1], points[1:]), 1)]
     return position_of_point_along_curve(t, derivative_points)
@@ -131,18 +177,13 @@ def plot_tangent_circles_along_line(radius, start_point, end_point, num_circles)
     # Calculate the distance between the start and end points
     distance = np.linalg.norm(end_point - start_point)
     direction = (end_point - start_point) / distance
-    
     # Calculate positions of circle centers
     centers = [start_point + direction * radius * (1 + 2 * i) for i in range(num_circles)]
-    
-    # Plotting each circle
     for center in centers:
         circle = plt.Circle(center, radius, color='r', fill=False, lw=2)
         ax.add_patch(circle)
-    # Drawing the line for reference
     line = np.vstack([start_point, end_point])
     plt.plot(line[:,0], line[:,1], 'b--')
-    # Set limits and aspect
     ax.set_xlim(min(start_point[0], end_point[0]) - radius, max(start_point[0], end_point[0]) + radius)
     ax.set_ylim(min(start_point[1], end_point[1]) - radius, max(start_point[1], end_point[1]) + radius)
     ax.set_aspect('equal')
@@ -159,9 +200,7 @@ def plot_tangent_circles_between_lines(start_x, end_x, lower_y, upper_y):
     center_y = (upper_y + lower_y) / 2
     number_of_circles = int((end_x - start_x) / (2 * radius))
     fig, ax = plt.subplots()
-    
     ax.hlines(y=[lower_y, upper_y], xmin=start_x, xmax=end_x, color='blue', linestyle='--')
-    
     for i in range(number_of_circles):
         center_x = start_x + radius + i * 2 * radius
         circle = plt.Circle((center_x, center_y), radius, color='r', fill=False, lw=2)
@@ -172,10 +211,8 @@ def plot_tangent_circles_between_lines(start_x, end_x, lower_y, upper_y):
     plt.grid(True)
     plt.show()
 
-
 def midpoint(p1, p2):
     return (p1 + p2) / 2
-
 
 def perpendicular_bisector(p1, p2):
     # Returns the slope and intercept of the perpendicular bisector
@@ -193,8 +230,8 @@ def perpendicular_bisector(p1, p2):
 def find_smallest_circle(points):
     # Helper function to calculate the circle from three points
     def calculate_circle(p1, p2, p3):
-        # Calculate the circumscribed circle of the triangle formed by points p1, p2, p3
-        # Using determinant method
+        # circle of the triangle formed by points p1, p2, p3
+        # determinant method
         A = np.linalg.det([[p1[0], p1[1], 1],
                            [p2[0], p2[1], 1],
                            [p3[0], p3[1], 1]])
@@ -230,7 +267,7 @@ def find_smallest_circle(points):
                     if valid:
                         smallest_radius = radius
                         smallest_circle = (center, radius)
-    # In case no valid circle was found with three points, fallback to any two points
+    #fallback to any two points if no valid circle was found
     if smallest_circle is None:
         for i in range(len(points)):
             for j in range(i + 1, len(points)):
@@ -245,7 +282,6 @@ def find_smallest_circle(points):
 def plot_polygon_with_circle(points, 
                              circle, fill_circle = None, lw_circle = 1, circle_color = 'r',
                              edgecolor='black', fill_edge=None,  lw_edge=1):
-    
     polygon = plt.Polygon(points, edgecolor=edgecolor, fill=fill_edge, lw=lw_edge)
     fig, ax = plt.subplots()
     ax.add_patch(polygon)

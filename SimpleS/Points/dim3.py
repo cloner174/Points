@@ -6,7 +6,7 @@ from SimpleS.utils import save_path_generator
 
 
 def read_off_file(file_path):
-        """ It will return 2Object  Vertices  and  Faces. """
+        """ It will return bject's Vertices  and  Faces. """
         with open(file_path, 'r') as file:
                 if file.readline().strip() != "OFF":
                         raise ValueError("Not a valid OFF file")
@@ -19,8 +19,16 @@ def read_off_file(file_path):
                 print("Secssesful . Faces")
         
         return vertices, faces
+
+
+def read_pts_file(file_path):
     
+    with open(file_path, 'r') as file:
+        points = [tuple(map(float, line.strip().split())) for line in file.readlines()]
+    print("Secssesful . Points from the PTS file.")
     
+    return points
+
 
 def rotate_3d_points(points, theta, axis='z'):
         """Rotate 3D points around the specified axis by theta degrees."""
@@ -45,8 +53,7 @@ def rotate_3d_points(points, theta, axis='z'):
                 ])
         
         return np.dot(points, rot_matrix.T)
-    
-    
+
 
 def plot_3d_points_using_vertices(v, f=None, axis = 'on', title = '3D Data Visualization', faces_colors = 'blue', alpha=0.75, linewidths=1, edgecolors='r', point_color='blue',show =True, save=False, save_path = None, file_name = None ):
         """
@@ -103,8 +110,7 @@ def plot_3d_points_using_vertices(v, f=None, axis = 'on', title = '3D Data Visua
                 plt.clf()
                 plt.close()
                 return
-    
-    
+
 
 def create_bool_image_from_3d_points(points, image_size=(500, 500),save = False, save_path = None, file_name = None):
         """
@@ -171,4 +177,3 @@ def plot_3d_points(points, title = '3D Points Plot', labels = 'on', elev=None, a
                 print(f"Plot saved to {path_to_save}")
 
 #end#
-
