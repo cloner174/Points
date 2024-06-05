@@ -14,12 +14,9 @@ class Space:
         self.points = points
         self.line = line
         self.circle = circle
-        
         self.__check_points__()
     
-    
     def __check_points__(self):
-        
         if self.p1 is not None and not isinstance(self.p1, tuple) or not isinstance(self.p1, float) or not isinstance(self.p1, int):
             if self.points is None:
                 self.points = self.p1
@@ -53,7 +50,6 @@ class Space:
                 self.points = self.p3
             else:
                 raise TypeError(" 'p' should be of type int or float or tuple represented a single point. ")
-        
         if isinstance(self.points , list) :
             if not hasattr(self, 'points_arr'):
                 self.points_arr = np.asarray(self.points)
@@ -72,9 +68,7 @@ class Space:
                     self.p1_arr = self.points
         else:
             raise TypeError(" 'points' should be of type list or numpy.ndarray represented a series of points. ")
-        
         self.__handle_points__()
-    
     
     def __handle_points__(self):
         
@@ -88,7 +82,6 @@ class Space:
         if points_z is not None:
             self.points_z = points_z
             points_z = None
-        
         if hasattr(self, 'p1_arr'):
             p1_z = None
             self.p1_x = self.p1_arr[:,0]
@@ -99,13 +92,10 @@ class Space:
                 pass
             if p1_z is not None:
                 self.p1_z = p1_z
-        
         self.__find_min__()
         self.__find_max__()
     
-    
     def __find_min__(self):
-        
         self.points_x_sorted = np.sort(self.points_x, axis=0)  #  np.min(self.points_x)
         points_x_min_i = self.points_x_sorted[0]  #  np.min(self.points_x)
         points_x = list(self.points_x)
@@ -131,7 +121,6 @@ class Space:
         else:
             self.points_x_min = (points_x_min_i, points_x_min_j)
             self.points_y_min = (points_y_min_i, points_y_min_j)
-        
         if hasattr(self, 'p1_arr'):
             self.p1_x_sorted = np.sort(self.p1_x, axis=0)
             p1_x_min_i = self.p1_x_sorted[0] #np.min(self.p1_x)
@@ -159,9 +148,7 @@ class Space:
                 self.p1_x_min = (p1_x_min_i, p1_x_min_j)
                 self.p1_y_min = (p1_y_min_i, p1_y_min_j)
     
-    
     def __find_max__(self):
-        
         self.positive_sorted_x = self.points_x_sorted[::-1]
         self.positive_sorted_y = self.points_y_sorted[::-1]
         points_x_max_i = self.positive_sorted_x[0]
@@ -187,7 +174,6 @@ class Space:
         else:
             self.points_x_max = (points_x_max_i, points_x_max_j)
             self.points_y_max = (points_y_max_i, points_y_max_j)
-        
         if hasattr(self, 'p1_arr'):
             self.positive_sorted_p1_x = self.p1_x_sorted[::-1]
             self.positive_sorted_p1_y = self.p1_y_sorted[::-1]
@@ -215,9 +201,7 @@ class Space:
                 self.p1_x_max = (p1_x_max_i, p1_x_max_j)
                 self.p1_y_max = (p1_y_max_i, p1_y_max_j)
     
-    
     def find_edges(self, n = 50, m = 50 , rotate = 0):
-        
         edges = []
         points_x = list(self.points_x)
         points_y = list(self.points_y)
@@ -227,15 +211,12 @@ class Space:
             second_arr = getattr(self, changes[1])
             first_arr_reRule = getattr(self, changes[1])
             second_arr_reRule = getattr(self, changes[0])
-            
             first_arr_i = first_arr[:n]
             first_arr_reRule_i = first_arr_reRule[:m]
             first_arr_j = []
             first_arr_reRule_j = []
-            
             if n != m :
                 raise NotImplementedError()
-            
             for i in range(len(first_arr_i)):
                 temp_1 = first_arr_i[i]
                 temp_2 = first_arr_reRule_i[i]
@@ -256,32 +237,26 @@ class Space:
                 elif tempy2 is not None:
                     first_arr_reRule_i_where = points_y.index(temp_2)
                     first_arr_reRule_j.append(self.points_x[first_arr_reRule_i_where])
-            
             second_arr_list = list(second_arr)
             second_arr_reRule_list = list(second_arr_reRule)
-            
             second_where = second_arr_list.index(first_arr_j[0])
             second_reRule_where = second_arr_reRule_list.index(first_arr_reRule_j[0])
-            
             second_max = second_arr[second_where:]
             second_reRule_max = second_arr_reRule[second_reRule_where:]
             second_max = list(second_max)
             second_reRule_max = list(second_reRule_max)
-            
             for a, b in zip(first_arr_i,first_arr_j):
                 if b in second_max:
                     if rotate == 0 or rotate == 2 :
                         edges.append((a,b))
                     elif rotate == 1 or rotate == 4:
                         edges.append((b,a))
-            
             for p, q in zip(first_arr_reRule_i,first_arr_reRule_j):
                 if q in second_reRule_max:
                     if rotate == 0 or 1:
                         edges.append((q,p))
                     elif rotate == 2 or rotate == 4:
                         edges.append((p,q))
-        
         return np.asarray(edges)
     
 #end#
