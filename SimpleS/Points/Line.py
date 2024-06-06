@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from SimpleS.utils import save_path_generator
 
 
-def find_line_equation(A, B, return_function_object = False):
+def find_line_equation(A, B, return_function_object = False, retrun_params_seperatly = False):
     """Calculate the line equation y = mx + c given two points A(x1, y1) and B(x2, y2)
     """
     x1, y1 = A
@@ -27,6 +27,42 @@ def find_line_equation(A, B, return_function_object = False):
         def y(x):
             return (m * x) + c
         return y
+    elif retrun_params_seperatly:
+        return m, c
+
+
+def find_90deg_line(L1, P, x = None, return_function_object_with_m = False):
+    """
+    Finds the perpendicular line to L1 passing through point P.
+    Args:
+        L1 (tuple): A tuple of two points defining the original line, each point is a tuple (x, y).
+        P (tuple): The point (x, y) through which the perpendicular line passes.
+        x (float, optional): The x-coordinate at which to find the y-coordinate of the perpendicular line. Defaults to None.
+        return_function_object_with_m (bool, optional): If True, returns the function of the perpendicular line. Defaults to False.
+    Returns:
+        If return_function_object_with_m is True, returns the function object of the perpendicular line.
+        If x is provided, returns the y-coordinate at the specified x.
+        If x is not provided, prints the equation of the perpendicular line and returns None.
+    """
+    m1, _ = find_line_equation(L1[0], L1[1], return_params_separately=True)
+    if m1 == 0:
+        raise ValueError("The line is horizontal, cannot find a perpendicular slope.")
+    m2 = -1 / m1
+    # y - y0 = m ( x - x0 )
+    # y - P[1] = m ( x - P[0] )
+    # y = m*( x - P[0] ) + P[1]
+    # y = ( (m*x) - (m*P[0]) ) + P[1]
+    def y(x):
+        return m2 * (x - P[0]) + P[1]
+    if return_function_object_with_m:
+        return y
+    else:
+        if x is None:
+            print(f"y = {m2}x + c (c = {P[1] - m2 * P[0]})")
+            return None
+        else:
+            return y(x)
+    #return (A - B) + P[1]
 
 
 def plot_line_on_figure(A, B, ax = None, additional_points = None,  additional_points_color = 'green',
@@ -285,7 +321,7 @@ def distance_from_point_to_polygon_sides(px, py, polygon, return_closest=False, 
     return distances
 
 
-def draw_line_on_fig_using_slope(ax, slope, intercept, label, color='r'):
+def draw_line_on_fig_using_slope(slope, intercept, ax, label, color='r'):
     """Plot a line based on slope and intercept on a provided matplotlib axis."""
     x_values = np.linspace(-10, 10, 400)
     if slope is None:  # Vertical line
@@ -357,7 +393,7 @@ def plot_any(*args, color_for_points = None, color_for_lines = None, random_colo
     plt.show()
 
 
-def plot_parallelـlines(A, B, distance, ax=None):
+def plot_parallel_lines(A, B, distance, ax=None):
     """Plot a line through points A and B and two parallel lines at a given distance."""
     if ax is None:
         fig, ax = plt.subplots()  # Create a new figure and axis if not provide
