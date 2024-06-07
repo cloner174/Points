@@ -88,21 +88,35 @@ def plot_filled_triangle_by_amount(A, B, C, amount):
     plt.show()
 
 
-def edge_lengths(pts):
+def edge_lengths(P1,P2,P3):
     """
     Compute the edge lengths of a triangle given its vertices
+    Parameters:
+    P1, P2, P3 (tuple): Vertices of the triangle.
     """
-    return np.linalg.norm(pts[1] - pts[0]), np.linalg.norm(pts[2] - pts[1]), np.linalg.norm(pts[0] - pts[2])
+    return np.linalg.norm(P2 - P1), np.linalg.norm(P3 - P2), np.linalg.norm(P1 - P3)
 
 
-def circumcircle_radius(pts):
+def circumcircle_radius(P1,P2,P3):
     """
     Compute the circumcircle radius of a triangle given its vertices
+    Parameters:
+    P1, P2, P3 (tuple): Vertices of the triangle.
     """
-    a, b, c = edge_lengths(pts)
-    area = calculate_triangle_shoelace_area(pts)
+    a, b, c = edge_lengths(P1,P2,P3)
+    area = calculate_triangle_shoelace_area(P1,P2,P3)
     return (a * b * c) / (4 * area)
 
+
+def interior_angles(P1,P2,P3):
+    """
+    The angles inside triangle.
+    """
+    a, b, c = edge_lengths(P1,P2,P3)
+    angle_a = np.arccos((b**2 + c**2 - a**2) / (2 * b * c))
+    angle_b = np.arccos((a**2 + c**2 - b**2) / (2 * a * c))
+    angle_c = np.pi - angle_a - angle_b
+    return angle_a, angle_b, angle_c
 
 
 def is_point_in_triangle(P, P1, P2, P3):
