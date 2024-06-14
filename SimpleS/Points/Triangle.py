@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
+from SimpleS.utils import save_path_generator
 
 def calculate_triangle_perimeter(A, B, C):
     """
@@ -219,13 +219,16 @@ def create_triangle_with_points(P1, P2, P3, xlim=(-10, 10), ylim=(-10, 10)):
     return triangle
 
 
-def plot_delaunay_triangle(points, delaunay, ax=None):
+def plot_delaunay_triangle(points, delaunay, ax=None, save = False, save_path = None):
     if ax is None:
         fig, ax = plt.subplots()
     else:
         fig = None
     for simplex in delaunay.simplices:
         ax.plot(points[simplex, 0], points[simplex, 1], 'k-')
+    if save and fig is not None:
+        path_to_save = save_path_generator(filename = None, path = save_path, flag = None)
+        plt.savefig(path_to_save)
     if fig is not None:
         return fig, ax
 
